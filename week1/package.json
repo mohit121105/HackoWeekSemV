@@ -1,0 +1,15 @@
+{
+  "name": "rest-chatbot",
+  "version": "1.0.0",
+  "description": "Full-stack chatbot using a backend REST API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "author": "Antigravity Agent",
+  "license": "ISC"
+}

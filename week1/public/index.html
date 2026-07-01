@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="An interactive, clean chat interface inspired by Claude, featuring Web Speech API, markdown styling, copy buttons, and suggestion chips.">
+  <title>Aether - Interactive Assistant</title>
+  <!-- Google Fonts: Inter and Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Collapsible Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <button class="new-chat-btn" id="new-chat-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Start new chat</span>
+        </button>
+      </div>
+
+      <div class="sidebar-content">
+        <div class="history-section">
+          <h3>Recent Chats</h3>
+          <div class="history-list">
+            <div class="history-item active">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Current Session</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <button id="clear-btn" class="sidebar-btn danger-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
+          <span>Clear conversation</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Chat Workspace -->
+    <main class="chat-workspace">
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="header-title">Aether 1.0</div>
+        <div class="header-status">
+          <span class="status-dot"></span>
+          <span class="status-label">Online</span>
+        </div>
+      </header>
+
+      <!-- Message Area -->
+      <div class="chat-flow-container">
+        <!-- Welcoming Hero Area (Shown when empty) -->
+        <div class="welcome-hero" id="welcome-hero">
+          <h1>How can I help you today?</h1>
+          
+          <!-- Suggestion Chips -->
+          <div class="suggestion-chips">
+            <div class="chip-card" data-prompt="Draft a professional email requesting project updates.">
+              <span class="chip-emoji">📧</span>
+              <div class="chip-card-content">
+                <h4>Draft an email</h4>
+                <p>Request project updates</p>
+              </div>
+            </div>
+            <div class="chip-card" data-prompt="Explain the difference between synchronous and asynchronous code.">
+              <span class="chip-emoji">💡</span>
+              <div class="chip-card-content">
+                <h4>Explain async code</h4>
+                <p>Core difference with examples</p>
+              </div>
+            </div>
+            <div class="chip-card" data-prompt="Give me a simple code template to initialize a web server.">
+              <span class="chip-emoji">💻</span>
+              <div class="chip-card-content">
+                <h4>Server code template</h4>
+                <p>Express setup block</p>
+              </div>
+            </div>
+            <div class="chip-card" data-prompt="Brainstorm 5 creative startup ideas combining tech and gardening.">
+              <span class="chip-emoji">🌱</span>
+              <div class="chip-card-content">
+                <h4>Brainstorm ideas</h4>
+                <p>Tech + gardening ideas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="messages-container" id="messages-container">
+          <!-- Messages loaded dynamically -->
+        </div>
+      </div>
+
+      <!-- Centered Claude-style Prompt Box -->
+      <footer class="chat-footer">
+        <div class="input-card">
+          <form id="chat-form" class="chat-form">
+            <textarea 
+              id="message-input" 
+              placeholder="Ask Aether anything..." 
+              rows="1"
+              maxlength="2000"
+              autocomplete="off" 
+              required
+              aria-label="Chat input message"
+            ></textarea>
+            
+            <div class="input-actions-bar">
+              <!-- Left Action Icons -->
+              <div class="left-actions">
+                <button type="button" class="action-btn" title="Add files (Mocked)">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                  </svg>
+                </button>
+                <button type="button" class="action-btn" id="tts-global-toggle" title="Toggle response speak out">
+                  <svg class="icon" id="tts-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+              </div>
+              
+              <!-- Right Action Controls (Char counter + Submit) -->
+              <div class="right-actions">
+                <span class="char-counter" id="char-counter">0 / 2000</span>
+                <button type="submit" id="send-btn" class="send-btn" aria-label="Send message">
+                  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <p class="disclaimer">Aether can make mistakes. Please verify important information.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- App JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
